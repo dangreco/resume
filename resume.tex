@@ -1,0 +1,268 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[margin=0.5in]{geometry}
+\usepackage[explicit]{titlesec}
+\usepackage{enumitem}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries}
+  {}
+  {0em}
+  {#1}
+  [{\titlerule[0.8pt]\vspace{0.5cm}}]
+
+
+
+\renewcommand\labelitemi{{\boldmath$\cdot$}}
+\setlength{\parindent}{0pt}
+\setlist{nolistsep}
+
+\newcommand{\Education}[5]{%
+  \vbox{%
+    \footnotesize \textit{#3} \normalsize 
+    \\ \textbf{#1}
+    \\ #2
+    \\ \footnotesize #4—#5 \normalsize
+  }
+}
+
+\newcommand{\Experience}[6]{%
+  \vbox{%
+    \footnotesize \textit{#3} \normalsize
+    \\ \textbf{#2} 
+    \\ #1
+    \\ \footnotesize #4—#5 \normalsize
+    \\
+    \begin{itemize}[leftmargin=*]
+      #6
+    \end{itemize}
+  }
+}
+
+\newcommand{\Mentorship}[4]{%
+  \vbox{%
+    \footnotesize \textit{#1} \normalsize
+    \\ \textbf{#2}
+    \def\temp{#3}\ifx\temp\empty
+      \\
+    \else
+      \begin{itemize}[leftmargin=*]
+        #3
+      \end{itemize}
+    \fi
+    \footnotesize #4 \normalsize
+  }
+}
+
+\newcommand{\Award}[4]{%
+  \vbox{%
+    \footnotesize \textit{#1} \normalsize
+    \\ \textbf{#2}
+    \\ #3
+    \\ \footnotesize #4 \normalsize
+  }
+}
+
+\newcommand{\Media}[3]{
+  \vbox{%
+    #1
+    \\ \textbf{#2}
+    \def\temp{#3}\ifx\temp\empty
+    \else
+      \\ #3
+    \fi
+  }
+}
+
+\newcommand{\Skill}[2]{%
+  \begin{minipage}[t]{0.2\textwidth}
+    \textbf{#1}
+    \vspace{0.25cm}
+    \begin{itemize}[leftmargin=*]
+      #2
+    \end{itemize}
+  \end{minipage}
+}
+
+\begin{document}
+  
+  \begin{minipage}[left]{0.5\textwidth}
+    \begin{flushleft}
+      \Large \textbf{Daniel Greco} \normalsize \textit{(he/him)}
+      \\ 4295 rue Saint-Urbain
+      \\Montreal, QC H2W 1V6
+    \end{flushleft}
+  \end{minipage}
+  \begin{minipage}[right]{0.5\textwidth}
+    \begin{flushright}
+      \textbf{Website:} dangre.co
+      \\ \textbf{Phone:} +1 (438)-345-6997
+      \\ \textbf{Email:} daniel.greco@mail.mcgill.ca
+    \end{flushright}
+  \end{minipage}
+
+  \section{Summary}
+  Full-Stack Engineer with 5+ years of professional experience developing web 
+  applications and backend services. Attention to detail regarding security, 
+  optimization, and codebase organization. Ability to work on fast-paced 
+  projects and meet sprint demands. Interests in the future of the web, 
+  e-commerce, and home automation.
+
+  \section{Skills}
+
+  \Skill{Languages}{%
+    \item TypeScript
+    \item JavaScript
+    \item Rust
+    \item C
+    \item Java
+    \item Python
+    \item Ruby
+  }
+  \Skill{Frameworks}{%
+    \item React
+    \item Gatsby
+    \item Next.js
+    \item Ruby on Rails
+    \item React Native
+    \item GTK
+  }
+  \Skill{Databases}{%
+    \item MongoDB
+    \item PostgreSQL
+    \item Redis
+    \item MariaDB
+  }
+  \Skill{Services}{%
+    \item Netlify
+    \item Heroku
+    \item Vercel
+    \item AWS
+    \item MongoDB Atlas
+    \item Shopify
+  }
+  \Skill{Tools}{%
+    \item Docker
+    \item PM2
+    \item Git
+    \item Jira
+    \item Confluence
+  }
+
+  \section{Education}
+
+  \Education{McGill University}{B.A. Computer Science, Minor Mathematics }{Montreal, QC}{August 2019}{Present}
+
+
+  \section{Experience}
+
+  \Experience{%
+    Full-Stack Engineer
+  }{%
+    Speer Technologies
+  }{Toronto, ON (Remote)}{June 2021}{Present}{%
+    \item Develop and maintain containerized backend services with Docker
+    \item Identify and patch security issues found within codebases
+    \item Research and design of smart contracts for the Ethereum blockchain
+    \item Integrate e-commerce solution with Shopify’s Storefront, Admin, and Subscription APIs
+    \item Utilize languages and frameworks such as TypeScript, React, Node.js, Koa, GraphQL
+    \item Integrate with various databases including MongoDB, Redis, Firestore
+    \item Draft full-stack architecture for large-scale application
+  }
+  
+  \vspace{1cm}
+
+  \Experience{%
+    Full-Stack Developer
+  }{%
+    Westhill High School
+  }{Stamford, CT}{April 2019}{July 2019}{%
+    \item Led the website and CMS development of the computer science program at Westhill High School
+    \item Utilized React and Gatsby for the frontend application
+    \item Developed from-scratch CMS solution for publishing news and articles
+    \item Managed a team of frontend developers, taught Git operations and programming best practices
+  }
+  
+  \vspace{1cm}
+
+  \Experience{%
+    Lead Developer
+  }{%
+    thewoodman LLC
+  }{Stamford, CT}{June 2015}{October 2015}{%
+    \item Spearheaded the development of a full-stack e-commerce solution for the largest
+    kiln-dried firewood company in the New York tri-state area
+    \item Leveraged languages and frameworks such as JavaScript, React, Node.js, Express, MongoDB
+    \item Integrated backend order processing service with Intuit QuickBooks
+    \item Projected customer age demographic widened from $>40$y.o. to $>20$y.o.
+  }
+
+  \vspace{1cm}
+
+  \Experience{%
+    Frontend Developer
+  }{%
+    CT Education Advocacy
+  }{Stamford, CT}{July 2014}{September 2014}{%
+    \item Created a professional website for an advocacy group for special needs children in
+    the school system
+    \item Ported existing WordPress components to responsive counterparts built with HTML, CSS, JavaScript
+    \item Managed private host server via SSH and FTP
+  }
+
+  \section{Mentorship}
+
+  \Mentorship{%
+    Remote
+  }{%
+    Hackville 2022
+  }{%
+    \item Served as a mentor in Sheridan College's annual hackathon.
+    \item Assisted participants with software engineering challenges and issues.
+    \item Taught best practices for production-quality development.
+  }{January 2022}
+
+  \vspace{1cm}
+
+  \Mentorship{Stamford, CT}{Teaching Assistant - Advanced Computer Science}{}{September 2018—June 2019}
+
+  \vspace{1cm}
+
+  \Mentorship{Stamford, CT}{Teaching Assistant - AP Computer Science}{}{September 2017—June 2018}
+
+  \vspace{1cm}
+
+  \Mentorship{%
+    Stamford, CT
+  }{%
+    Assistant Course Author - Advanced Computer Science
+  }{%
+    \item Wrote course material for Westhill High School's \textit{Advanced Computer Science}
+          course.
+    \item Taught topics including hashing, hash tables, advanced sorting algorithms.
+    \item Recorded instructional videos on algorithm demonstrations.
+    \item Created quizzes and evaluation material.
+  }{July 2017—September 2017}
+
+  \section{Awards}
+
+  \Award{Stratford, CT}{Lockheed Martin CodeQuest}{$3^{rd}$ Place}{April 2017}
+
+  \vspace{1cm}
+
+  \Award{Stratford, CT}{Lockheed Martin CodeQuest}{$2^{nd}$ Place}{April 2016}
+
+  \vspace{1cm}
+
+  \Award{Stamford, CT}{Stamford Hackathon}{$2^{nd}$ Place}{February 2015}
+
+  \section{Media}
+
+  \Media{Book Mention}{College For Every Student: A Practitioner’s Guide to
+  Building College and Career Readiness}{}
+
+  \vspace{0.5cm}
+
+  \Media{Article}{Stamford Scholar Changing Lives, One Hard Drive At A Time}{patch.com}
+
+\end{document}
