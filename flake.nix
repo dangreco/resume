@@ -30,9 +30,12 @@
               nixfmt-rfc-style
               act
               typst
+              font-awesome
             ]
             ++ buildInputs
             ++ nativeBuildInputs;
+
+          TYPST_FONT_PATHS = "${pkgs.font-awesome}/share/fonts/opentype";
         };
       }
     );

@@ -1,0 +1,95 @@
+settings:
+profile:
+  name: Daniel Greco
+  position: Software Engineer
+  location: Montréal, QC
+  links:
+    - to: "tel:+14383456997"
+      value: +1 (438) 345-6997
+      icon: phone
+    - to: "mailto:me@dangre.co"
+      value: me@dangre.co
+      icon: envelope
+    - to: https://linkedin.com/in/danrgreco
+      value: linkedin.com/in/danrgreco
+      icon: linkedin
+    - to: https://github.com/dangreco
+      value: github.com/dangreco
+      icon: github
+    - to: https://dangre.co
+      value: dangre.co
+      icon: globe
+summary: |
+  Versatile software engineer with a track record of delivering scalable, secure web applications and infrastructure.
+  Adept at translating complex requirements into practical solutions across frontend, backend, and DevOps.
+  Experienced in client collaboration, regulatory compliance, and building CI/CD pipelines.
+  Committed to building maintainable, high-performance systems in agile, fast-paced environments.
+
+education:
+  - from:
+      month: 8
+      year: 2019
+    to:
+      month: 12
+      year: 2025
+    expected: true
+    degree:
+      - type: major
+        degree: BA
+        field: Computer Science
+      - type: minor
+        field: Mathematics
+    institution: McGill University
+    location: Montréal, QC
+experience:
+  - from:
+      month: 6
+      year: 2021
+    to:
+      month: 7
+      year: 2022
+    title: Intermediate Full-Stack Engineer
+    company: Speer
+    location: Toronto, ON
+    description: |
+      Led development of a custom ecommerce platform for a regulated vape company, ensuring compliance with nicotine sales laws
+      Designed and integrated a bespoke payment gateway tailored to legal and business constraints
+      Managed client relationships, converting legal requirements into scalable technical solutions
+      Developed secure CI/CD pipelines and automated deployment infrastructure
+      Contributed UI improvements and fixes across multiple client-facing applications
+  - from:
+      month: 6
+      year: 2018
+    to:
+      month: 8
+      year: 2018
+    title: Full-Stack Engineer (Contract)
+    company: Thewoodman LLC
+    location: Stamford, CT
+    description: |
+      Built a fully custom ecommerce platform for a firewood company, replacing legacy phone and paper-based systems
+      Automated invoicing, tax handling, and order tracking with Intuit QuickBooks integration
+      Streamlined order fulfillment and improved user experience through digital checkout
+      Delivered directly to business owner specifications, increasing operational efficiency
+skills:
+  - category: Languages
+    items:
+      - Rust
+      - C
+      - Java
+      - Python
+      - TypeScript
+      - SQL
+  - category: Frameworks & Libraries
+    items:
+      - React
+      - GraphQL
+  - category: Tools & Infrastructure
+    items:
+      - Kubernetes
+      - Terraform
+      - Docker
+      - Git
+  - category: Platforms
+    items:
+      - Linux
