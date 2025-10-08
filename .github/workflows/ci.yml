@@ -1,19 +1,17 @@
-name: Nix
+name: CI
 on:
   pull_request:
     branches:
       - main
     paths:
-      - flake.nix
-      - flake.lock
+      - src/**/*
   push:
     branches:
       - main
     paths:
-      - flake.nix
-      - flake.lock
+      - src/**/*
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,5 +23,8 @@ jobs:
       - name: Setup Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Run Nix flake check
-        run: nix flake check --all-systems --no-build
+      - name: Build resume
+        run: nix develop --command just build
+
+      - name: Check PDF was created
+        run: test -f .build/resume.pdf

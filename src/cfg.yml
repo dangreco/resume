@@ -4,9 +4,6 @@ profile:
   position: Software Engineer
   location: Montréal, QC
   links:
-    - to: "tel:+14383456997"
-      value: +1 (438) 345-6997
-      icon: phone
     - to: "mailto:me@dangre.co"
       value: me@dangre.co
       icon: envelope
@@ -19,11 +16,12 @@ profile:
     - to: https://dangre.co
       value: dangre.co
       icon: globe
-summary: |
-  Versatile software engineer with a track record of delivering scalable, secure web applications and infrastructure.
-  Adept at translating complex requirements into practical solutions across frontend, backend, and DevOps.
-  Experienced in client collaboration, regulatory compliance, and building CI/CD pipelines.
-  Committed to building maintainable, high-performance systems in agile, fast-paced environments.
+summary:
+  - Versatile software engineer with a track record of delivering scalable, secure web applications and infrastructure
+  - Adept at translating complex requirements into practical solutions across frontend, backend, and DevOps
+  - Experienced in client collaboration, regulatory compliance, and building CI/CD pipelines
+  - Hands-on experience with hardware integration through IoT/home automation projects, 3D printing, and PCB design
+  - Committed to building maintainable, high-performance systems in agile, fast-paced environments
 
 education:
   - from:
@@ -51,12 +49,12 @@ experience:
     title: Intermediate Full-Stack Engineer
     company: Speer
     location: Toronto, ON
-    description: |
-      Led development of a custom ecommerce platform for a regulated vape company, ensuring compliance with nicotine sales laws
-      Designed and integrated a bespoke payment gateway tailored to legal and business constraints
-      Managed client relationships, converting legal requirements into scalable technical solutions
-      Developed secure CI/CD pipelines and automated deployment infrastructure
-      Contributed UI improvements and fixes across multiple client-facing applications
+    description:
+      - Led development of a custom ecommerce platform for a regulated vape company, ensuring compliance with nicotine sales laws
+      - Designed and integrated a bespoke payment gateway tailored to legal and business constraints
+      - Managed client relationships, converting legal requirements into scalable technical solutions
+      - Developed secure CI/CD pipelines and automated deployment infrastructure
+      - Contributed UI improvements and fixes across multiple client-facing applications
   - from:
       month: 6
       year: 2018
@@ -66,30 +64,82 @@ experience:
     title: Full-Stack Engineer (Contract)
     company: Thewoodman LLC
     location: Stamford, CT
-    description: |
-      Built a fully custom ecommerce platform for a firewood company, replacing legacy phone and paper-based systems
-      Automated invoicing, tax handling, and order tracking with Intuit QuickBooks integration
-      Streamlined order fulfillment and improved user experience through digital checkout
-      Delivered directly to business owner specifications, increasing operational efficiency
+    description:
+      - Built a fully custom ecommerce platform for a firewood company, replacing legacy phone and paper-based systems
+      - Automated invoicing, tax handling, and order tracking with Intuit QuickBooks integration
+      - Streamlined order fulfillment and improved user experience through digital checkout
+      - Delivered directly to business owner specifications, increasing operational efficiency
 skills:
-  - category: Languages
+  - category: Programming Languages
     items:
       - Rust
+      - Haskell
+      - OCaml
       - C
       - Java
-      - Python
       - TypeScript
+      - Python
+      - Bash
       - SQL
-  - category: Frameworks & Libraries
+  - category: Web Technologies & APIs
     items:
       - React
+      - Node.js
       - GraphQL
-  - category: Tools & Infrastructure
+      - RESTful APIs
+      - Nest.js
+      - Express
+      - Tokio
+  - category: DevOps & Cloud Infrastructure
     items:
       - Kubernetes
-      - Terraform
       - Docker
+      - Terraform
+      - AWS (EC2, S3)
+      - GitHub Actions
       - Git
-  - category: Platforms
+  - category: Databases & Data Storage
+    items:
+      - PostgreSQL
+      - MongoDB
+      - Redis
+  - category: Systems & Architecture
     items:
       - Linux
+      - Unix
+      - Microservices Architecture
+      - Cloud-Native Development
+  - category: Hardware & IoT
+    items:
+      - CAD
+      - 3D Printing
+      - PCB Design
+      - Soldering
+      - Home Automation
+      - MQTT
+projects:
+  - name: threedy
+    repo: dangreco/threedy
+    stars: 204
+    forks: 58
+    description:
+      - Home Assistant custom card for real-time 3D printer monitoring with live animation, camera integration, and sensor tracking
+      - Distributed via HACS with customizable themes and printer configurations
+    tags:
+      - TypeScript
+      - Preact
+      - HomeAssistant
+
+  - name: jean
+    repo: dangreco/jean
+    stars: 5
+    forks: 0
+    description:
+      - Computational biology library for Rust featuring DNA/RNA/protein sequence manipulation, file I/O (FASTA, GFF3), and bioinformatics algorithms
+      - Implemented Needleman-Wunsch global alignment algorithm with customizable scoring matrices and gap penalties
+      - Designed type-safe APIs for sequence transcription, translation, and reverse operations using Rust's type system
+    tags:
+      - Rust
+      - Bioinformatics
+      - FASTA
+      - GFF3
