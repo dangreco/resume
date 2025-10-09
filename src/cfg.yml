@@ -50,7 +50,7 @@ experience:
     company: Speer
     location: Toronto, ON
     description:
-      - Led development of a custom ecommerce platform for a regulated vape company, ensuring compliance with nicotine sales laws
+      - Led development of a custom ecommerce platform for a regulated vape products company, ensuring compliance with nicotine sales laws
       - Designed and integrated a bespoke payment gateway tailored to legal and business constraints
       - Managed client relationships, converting legal requirements into scalable technical solutions
       - Developed secure CI/CD pipelines and automated deployment infrastructure
@@ -70,7 +70,7 @@ experience:
       - Streamlined order fulfillment and improved user experience through digital checkout
       - Delivered directly to business owner specifications, increasing operational efficiency
 skills:
-  - category: Programming Languages
+  - category: Languages
     items:
       - Rust
       - Haskell
@@ -81,7 +81,7 @@ skills:
       - Python
       - Bash
       - SQL
-  - category: Web Technologies & APIs
+  - category: Web
     items:
       - React
       - Node.js
@@ -90,7 +90,7 @@ skills:
       - Nest.js
       - Express
       - Tokio
-  - category: DevOps & Cloud Infrastructure
+  - category: Infrastructure
     items:
       - Kubernetes
       - Docker
@@ -98,18 +98,18 @@ skills:
       - AWS (EC2, S3)
       - GitHub Actions
       - Git
-  - category: Databases & Data Storage
+  - category: Databases
     items:
       - PostgreSQL
       - MongoDB
       - Redis
-  - category: Systems & Architecture
+  - category: Systems
     items:
       - Linux
       - Unix
       - Microservices Architecture
       - Cloud-Native Development
-  - category: Hardware & IoT
+  - category: Hardware
     items:
       - CAD
       - 3D Printing
@@ -128,7 +128,7 @@ projects:
     tags:
       - TypeScript
       - Preact
-      - HomeAssistant
+      - Home Assistant
 
   - name: jean
     repo: dangreco/jean
