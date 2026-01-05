@@ -22,7 +22,7 @@ jobs:
         id: deployment
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment: pr-${{ github.event.pull_request.number }}
+          environment: Preview
           description: "Preview for PR #${{ github.event.pull_request.number }}"
 
       - name: Install Nix
