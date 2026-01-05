@@ -17,10 +17,11 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Create GitHub deployment
-        uses: chrnorm/deployment-action@v2.0.7
+        uses: chrnorm/deployment-action@55729fcebec3d284f60f5bcabbd8376437d696b1 # v2.0.7
+        id: deployment
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment: Preview
+          environment: pr-${{ github.event.pull_request.number }}
           description: "Preview for PR #${{ github.event.pull_request.number }}"
 
       - name: Install Nix
@@ -32,14 +33,23 @@ jobs:
       - name: Build PDF
         run: nix develop .#ci --command task typst:build
 
-      - name: Upload to S3
-        uses: shallwefootball/s3-upload-action@v1.3.3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
-          aws_key_id: ${{ secrets.AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: "_build"
-          destination_dir: "pr-${{ github.event.pull_request.number }}"
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        id: s3
+        run: |
+          aws s3 cp _build/resume.en.pdf s3://${{ secrets.AWS_BUCKET }}/pr-${{ github.event.pull_request.number }}/resume.en.pdf
+          URL=$(aws s3 presign s3://${{ secrets.AWS_BUCKET }}/pr-${{ github.event.pull_request.number }}/resume.en.pdf --expires-in 604800)
+          echo "url=$URL" >> $GITHUB_OUTPUT
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Upload PDF as artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -50,16 +60,16 @@ jobs:
 
       - name: Update deployment status (success)
         if: success()
-        uses: chrnorm/deployment-status@v2
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment-url: https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION || 'us-east-1' }}.amazonaws.com/pr-${{ github.event.pull_request.number }}/resume.en.pdf
+          environment-url: ${{ steps.s3.outputs.url }}
           state: "success"
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
         if: failure()
-        uses: chrnorm/deployment-status@v2
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           state: "failure"
@@ -74,9 +84,11 @@ jobs:
             ## Resume Preview
             A preview PDF has been generated and deployed for this PR.
 
-            **🔗 Live Preview:** [View PDF on S3](https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION || 'us-east-1' }}.amazonaws.com/pr-${{ github.event.pull_request.number }}/resume.en.pdf)
+            **🔗 Live Preview:** [View PDF on S3](${{ steps.s3.outputs.url }})
 
             **📦 Artifact Download:** [resume.en.pdf](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+
+            ⚠️ *Preview link expires in 7 days*
 
             <details>
             <summary>Deployment Details</summary>
