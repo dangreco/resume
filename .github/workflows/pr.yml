@@ -26,7 +26,7 @@ jobs:
           description: "Preview for PR #${{ github.event.pull_request.number }}"
 
       - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@9596b92e70cbf68a494a2b0273cb5b680184f5fc # v3.13.1
+        uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
 
       - name: Initialize Nix shell
         run: nix develop .#ci --command true
