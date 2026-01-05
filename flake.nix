@@ -45,6 +45,7 @@
                     nil
                     nixd
                     nixfmt
+                    pinact
                     go-task
                     typst
                     typstyle
