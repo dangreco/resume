@@ -1,0 +1,86 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+# yamllint disable rule:line-length
+# yamllint disable rule:comments
+name: CD
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * 0" # weekly
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@55729fcebec3d284f60f5bcabbd8376437d696b1 # v2.0.7
+        id: deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: Production
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # v3.15.1
+
+      - name: Initialize Nix shell
+        run: nix develop .#release --command true
+
+      - name: Setup GPG
+        env:
+          GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }}
+        run: |
+          echo "$GPG_PRIVATE_KEY_BASE64" | base64 -d | gpg --batch --import
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
+      - name: Build, sign, and generate checksums
+        env:
+          GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: nix develop .#release --command task sign
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        id: s3
+        run: |
+          # Upload all files from _build to production folder
+          aws s3 sync _build/ s3://${{ secrets.AWS_BUCKET }}/production/ \
+            --acl public-read \
+            --cache-control "public, max-age=31536000" \
+            --delete
+
+          # Set output URLs
+          URL="https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/production/resume.en.pdf"
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "bucket_url=https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/production/" >> $GITHUB_OUTPUT
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: ${{ steps.s3.outputs.url }}
+          state: "success"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: "failure"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
