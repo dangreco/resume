@@ -69,7 +69,7 @@
 
 
 // Summary
-#section("Summary")
+#section("Summary!")
 #{
   (..cfg.summary, "").join(". ")
 }
