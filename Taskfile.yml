@@ -1,0 +1,64 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+includes:
+  yaml: ./tasks/yaml.yml
+  typst: ./tasks/typst.yml
+
+tasks:
+  default:
+    desc: List tasks
+    silent: true
+    cmds:
+      - task --list
+
+  clean:
+    desc: Clean the project
+    silent: true
+    deps:
+      - typst:clean
+    cmds: []
+
+  build:
+    desc: Build the project
+    silent: true
+    deps:
+      - typst:build
+    cmds: []
+
+  watch:
+    desc: Watch and rebuild on changes
+    silent: false
+    deps:
+      - typst:watch
+    cmds: []
+
+  test:
+    desc: Test the project
+    silent: true
+    deps:
+      - typst:test
+    cmds: []
+
+  check:
+    desc: Check for linting/formatting errors
+    silent: true
+    deps:
+      - yaml:check
+      - typst:check
+    cmds: []
+
+  fix:
+    desc: Fix linting/formatting errors
+    silent: true
+    deps:
+      - yaml:fix
+      - typst:fix
+    cmds: []
+
+  sign:
+    desc: Build, sign, and generate checksums
+    silent: true
+    cmds:
+      - scripts/sign.sh

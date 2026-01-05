@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  default:
+    desc: List tasks
+    silent: true
+    cmds:
+      - task -t tasks/typst.yml --list
+
+  clean:
+    desc: Clean Typst build files
+    silent: true
+    cmds:
+      - rm -rf _build
+
+  build:
+    desc: Build Typst document
+    silent: true
+    sources:
+      - "src/**/*"
+    generates:
+      - _build/resume.en.pdf
+    cmds:
+      - mkdir -p _build
+      - typst compile -f pdf --root . src/main.typ _build/resume.en.pdf
+
+  watch:
+    desc: Watch and rebuild Typst document on changes
+    silent: false
+    deps:
+      - build
+    cmds:
+      - xdg-open _build/resume.en.pdf
+      - typst watch -f pdf --root . src/main.typ _build/resume.en.pdf
+
+  test:
+    desc: Test Typst document
+    silent: true
+    cmds:
+      - typst compile -f pdf --root . src/main.typ /dev/null
+
+  check:
+    desc: Check Typst files
+    silent: true
+    cmds:
+      - typstyle --check src/
+
+  fix:
+    desc: Fix Typst files
+    silent: true
+    cmds:
+      - typstyle --inplace src/

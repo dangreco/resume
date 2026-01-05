@@ -55,12 +55,13 @@
     #stack(
       dir: ltr,
       spacing: 0.4cm,
-      ..cfg.profile
+      ..cfg
+        .profile
         .links
         .map(l => {
           [#icon(l.icon) #h(1pt) #link(l.to)[#l.value]]
         })
-        .flatten()
+        .flatten(),
     )
   ]
   #v(0.08cm)
@@ -77,15 +78,23 @@
 #section("Education")
 #{
   for x in cfg.education {
-    grid(columns: (1fr, auto), align: (start, end), gutter: 0.24cm,
+    grid(
+      columns: (1fr, auto),
+      align: (start, end),
+      gutter: 0.24cm,
       [*#x.institution* | #x.location],
       format-date-range(x.from, x.to, expected: x.expected),
     )
 
     (
-      x.degree.filter(d => d.type == "major").map(d => d.degree + " in " + d.field),
+      x
+        .degree
+        .filter(d => d.type == "major")
+        .map(d => d.degree + " in " + d.field),
       x.degree.filter(d => d.type == "minor").map(d => "Minor in " + d.field),
-    ).flatten().join(", ")
+    )
+      .flatten()
+      .join(", ")
 
     v(0.24cm)
   }
@@ -95,9 +104,11 @@
 #section("Experience")
 #{
   for x in cfg.experience {
-    grid(columns: (1fr, auto), align: (start, end), gutter: 0.24cm,
-      [*#x.company* | #x.location],
-      format-date-range(x.from, x.to),
+    grid(
+      columns: (1fr, auto),
+      align: (start, end),
+      gutter: 0.24cm,
+      [*#x.company* | #x.location], format-date-range(x.from, x.to),
     )
     text(fill: rgb("#444"))[_#x.title;_ \ ]
     v(0.08cm)

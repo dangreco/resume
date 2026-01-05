@@ -1,3 +1,6 @@
+---
+# yamllint disable rule:line-length
+# yamllint disable rule:comments
 settings:
 profile:
   name: Daniel Greco

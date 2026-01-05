@@ -1,3 +1,7 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+# yamllint disable rule:line-length
+# yamllint disable rule:comments
 name: Release
 on:
   release:
@@ -9,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+        uses: DeterminateSystems/determinate-nix-action@9596b92e70cbf68a494a2b0273cb5b680184f5fc # v3.13.1
 
-      - name: Setup Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Initialize Nix shell
+        run: nix develop .#release --command true
 
       - name: Setup GPG
         env:
@@ -29,14 +33,14 @@ jobs:
         env:
           GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: nix develop --command just sign
+        run: nix develop .#release --command task sign
 
       - name: Upload assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            .build/resume.pdf
-            .build/resume.pdf.asc
-            .build/checksums.txt
+            _build/resume.en.pdf
+            _build/resume.en.pdf.asc
+            _build/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

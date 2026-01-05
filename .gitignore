@@ -1,3 +1,7 @@
+/.zed
+/.pre-commit-config.yaml
+/.envrc
 /.direnv
-/.build
+/_build
+/.task
 .env
