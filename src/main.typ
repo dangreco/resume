@@ -47,9 +47,15 @@
   #text(size: 10pt)[#cfg.profile.position #sym.dot.c #cfg.profile.location]
   #v(0.2cm)
   #text(size: 9pt)[
-    #cfg.profile.links.map(l => {
-      [#icon(l.icon) #link(l.to)[#l.value]]
-    }).join(h(0.4cm))
+    #(
+      cfg
+        .profile
+        .links
+        .map(l => {
+          [#icon(l.icon) #link(l.to)[#l.value]]
+        })
+        .join(h(0.4cm))
+    )
   ]
 ]
 
@@ -69,9 +75,13 @@
   text(size: 9pt, fill: rgb("#555"))[#x.location]
   v(0.08cm)
   text()[
-    #if x.degree.filter(d => d.type == "major").len() > 0 [*Major:* #x.degree.filter(d => d.type == "major").map(d => d.field).join(", ")]
+    #if (
+      x.degree.filter(d => d.type == "major").len() > 0
+    ) [*Major:* #x.degree.filter(d => d.type == "major").map(d => d.field).join(", ")]
     \
-    #if x.degree.filter(d => d.type == "minor").len() > 0 [*Minor:* #x.degree.filter(d => d.type == "minor").map(d => d.field).join(", ")]
+    #if (
+      x.degree.filter(d => d.type == "minor").len() > 0
+    ) [*Minor:* #x.degree.filter(d => d.type == "minor").map(d => d.field).join(", ")]
     \
     *Relevant Coursework:* #x.coursework.join(", ")
   ]
@@ -91,7 +101,7 @@
   for y in x.description {
     grid(
       columns: (0.4cm, 1fr),
-      [•], [#y]
+      [•], [#y],
     )
   }
   v(0.2cm)
@@ -110,14 +120,18 @@
     columns: (1fr, auto),
     align: (start, end),
     [*#x.name*],
-    text(size: 9pt)[#icon("star") #x.stars #h(0.2cm) #icon("code-fork") #x.forks],
+    text(size: 9pt)[#icon("star") #x.stars #h(0.2cm) #icon(
+        "code-fork",
+      ) #x.forks],
   )
-  text(size: 9pt)[#link("https://github.com/" + x.repo)[github.com/#x.repo] #h(0.3cm) #text(fill: rgb("#555"))[#x.tags.join(" • ")]]
+  text(size: 9pt)[#link("https://github.com/" + x.repo)[github.com/#x.repo] #h(
+      0.3cm,
+    ) #text(fill: rgb("#555"))[#x.tags.join(" • ")]]
   v(0.12cm)
   for y in x.description {
     grid(
       columns: (0.4cm, 1fr),
-      [•], [#y]
+      [•], [#y],
     )
   }
   v(0.2cm)
