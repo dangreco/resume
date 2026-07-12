@@ -65,4 +65,9 @@ fixed URL without going through the GitHub API.
 
 Releases run under a GitHub App rather than the default `GITHUB_TOKEN`, which
 cannot trigger downstream workflows. The app's credentials are read from the
-`RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` secrets.
+`RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` secrets, and it needs `contents`,
+`pull-requests`, and `workflows` permissions.
+
+Because `release-tag` fast-forwards `main` by pushing to it directly, the app
+must also be a **bypass actor** on any ruleset protecting `main`. Without that,
+the push is rejected, and a release gets tagged but never published or deployed.
