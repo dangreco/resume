@@ -3,17 +3,54 @@
 # yamllint disable rule:line-length
 # yamllint disable rule:comments
 name: Release
+# Builds and signs the resume once, then publishes that one build to both the
+# GitHub Release and S3. Building once is the point: a second build would carry a
+# different signature, a different released_at, and possibly different PDF bytes,
+# so the checksums attached to the release would not describe the deployed PDF.
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to rebuild and redeploy (defaults to the latest release)
+        required: false
 permissions:
   contents: write
+  deployments: write
 jobs:
-  sign:
+  release:
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve release tag
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          TAG="${EVENT_TAG:-$INPUT_TAG}"
+          if [ -z "$TAG" ]; then
+            TAG="$(gh release view --json tagName --jq .tagName)"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Publishing $TAG"
+
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          # Already the checked-out ref on a release event; on a manual dispatch it
+          # is what keeps the build off the tip of dev.
+          ref: ${{ steps.release.outputs.tag }}
+
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@55729fcebec3d284f60f5bcabbd8376437d696b1 # v2.0.7
+        id: deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: Production
 
       - name: Install Nix
         uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
@@ -51,9 +88,12 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: nix develop .#release --command task dist
 
+      # GitHub before S3: a broken bucket or credential then leaves a complete,
+      # signed release rather than a half-published one.
       - name: Upload assets
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
+          tag_name: ${{ steps.release.outputs.tag }}
           files: |
             _build/resume.en.pdf
             _build/resume.en.pdf.asc
@@ -61,3 +101,46 @@ jobs:
             _build/release.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        id: s3
+        run: |
+          # Upload PDFs with short cache
+          aws s3 sync _build/ s3://${{ secrets.AWS_BUCKET }}/production/ \
+            --exclude "*" --include "*.pdf" \
+            --cache-control "public, max-age=3600" \
+            --delete
+
+          # Upload checksums/signatures with no cache
+          aws s3 sync _build/ s3://${{ secrets.AWS_BUCKET }}/production/ \
+            --exclude "*.pdf" \
+            --cache-control "no-cache, must-revalidate"
+
+          # Set output URLs
+          URL="https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/production/resume.en.pdf"
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "bucket_url=https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/production/" >> $GITHUB_OUTPUT
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: ${{ steps.s3.outputs.url }}
+          state: "success"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: "failure"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}

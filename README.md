@@ -21,8 +21,9 @@ task fix     # apply formatting fixes
 `dev` and lands there by pull request.
 
 `main` tracks the last released state. Nothing is pushed to it directly. It is
-fast-forwarded to the release commit when a release is tagged, which means a
-push to `main` always signifies a release and is what triggers deployment.
+fast-forwarded to the release commit when a release is tagged, so it always
+points at what is currently published. It is a pointer only; no workflow runs
+off it.
 
 ## Releasing
 
@@ -37,8 +38,10 @@ PR automatically. Merging that PR is what cuts a release.
 
 `release-tag` fires on the resulting `VERSION` change, tags the commit,
 fast-forwards `main`, and creates the GitHub Release. That release triggers
-`Release` (which signs the PDF and attaches it with checksums), and the push to
-`main` triggers `CD` (which deploys to S3).
+`Release`, which builds and signs the PDF once and publishes that single build to
+both the GitHub Release and S3, so the checksums and signature always describe the
+deployed PDF. A release can be rebuilt and redeployed by hand with
+`gh workflow run release.yml -f tag=<tag>`.
 
 The `YYYY.MM.0` release auto-merges on the 1st of each month once checks pass, so
 the resume is re-signed and re-published at least monthly even when its content
