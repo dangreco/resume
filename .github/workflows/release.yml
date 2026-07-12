@@ -128,6 +128,14 @@ jobs:
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "bucket_url=https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/production/" >> $GITHUB_OUTPUT
 
+      # Last, so the site rebuilds against the release that was just published
+      # rather than the previous one. Fire-and-forget: the hook returns a queued
+      # job id, it does not wait for Vercel's build.
+      - name: Trigger Vercel deploy
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: curl --fail-with-body -sS -X POST "$VERCEL_DEPLOY_HOOK_URL"
+
       - name: Update deployment status (success)
         if: success()
         uses: chrnorm/deployment-status@9a72af4586197112e0491ea843682b5dc280d806 # v2.0.3

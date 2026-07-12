@@ -40,7 +40,9 @@ PR automatically. Merging that PR is what cuts a release.
 fast-forwards `main`, and creates the GitHub Release. That release triggers
 `Release`, which builds and signs the PDF once and publishes that single build to
 both the GitHub Release and S3, so the checksums and signature always describe the
-deployed PDF. A release can be rebuilt and redeployed by hand with
+deployed PDF. Once those assets are in place it pings the Vercel deploy hook
+(`VERCEL_DEPLOY_HOOK_URL`), so the web project rebuilds against the release that
+was just published. A release can be rebuilt and redeployed by hand with
 `gh workflow run release.yml -f tag=<tag>`.
 
 The `YYYY.MM.0` release auto-merges on the 1st of each month once checks pass, so
