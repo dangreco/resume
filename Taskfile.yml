@@ -62,3 +62,18 @@ tasks:
     silent: true
     cmds:
       - scripts/sign.sh
+
+  metadata:
+    desc: Generate release metadata JSON
+    silent: true
+    cmds:
+      - scripts/metadata.sh
+
+  dist:
+    desc: Build, sign, and generate release metadata
+    silent: true
+    # Sequential: metadata describes the artifacts sign produces, so these
+    # cannot be deps (which run in parallel).
+    cmds:
+      - task: sign
+      - task: metadata
