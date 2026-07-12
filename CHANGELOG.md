@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2026.07.4 - 2026-07-12
+
+### Features
+
+- Trigger a Vercel deploy once release assets are published (#30) (#30)
+
 ## 2026.07.3 - 2026-07-12
 
 ### Bug Fixes
