@@ -24,7 +24,7 @@ profile:
       icon: globe
 
 summary:
-  - Software engineer focused on building scalable backend systems, reliable infrastructure, and developer tooling
+  - Software engineer focused on event-driven distributed systems, scalable backend services, and reliable infrastructure
   - Experienced in designing APIs, integrating third-party services, and implementing CI/CD pipelines
   - Strong foundation in systems programming, databases, and cloud-native development
   - Hands-on with hardware through IoT/home automation projects, 3D printing, and PCB design
@@ -57,16 +57,32 @@ education:
 
 experience:
   - from:
+      month: 2
+      year: 2026
+    to:
+      month: 7
+      year: 2026
+    present: true
+    title: Full Stack Developer
+    company: Speer
+    location: Remote
+    description:
+      - Architected the event-driven backend for a healthcare telemedicine platform, publishing a shared Google Cloud Pub/Sub event-bus library (transactional outbox, idempotency stores, dead-letter queues, runtime contract tests) adopted across a dozen NestJS services
+      - Built a distributed saga and CQRS orchestration engine with durable compensation, driving booking, checkout, signup, and rescheduling across services with automatic refunds on failure and at-source PHI redaction
+      - Defined gRPC service contracts with Buf and provisioned the full GCP topology in Terraform across staging and production, including per-service subscriptions, dead-letter retention, and remote-state backends
+      - Created a company-wide CI/CD platform of reusable, versioned GitHub Actions workflows with automated release versioning and package publishing, consumed by every service
+      - Shipped full-stack features across two client products on Next.js and NestJS, holding backend coverage above 95% with Vitest unit and contract suites
+  - from:
       month: 6
       year: 2021
     to:
       month: 7
       year: 2022
-    title: Full-Stack Engineer
+    title: Full Stack Developer
     company: Speer
     location: Toronto, ON
     description:
-      - Architected backend services for a regulated ecommerce platform using Node.js, MongoDB, and Redis
+      - Built backend services for a regulated ecommerce platform using Node.js, MongoDB, and Redis
       - Designed and implemented a custom payment gateway to meet legal constraints for nicotine product sales
       - Built integrations with Shopify REST and GraphQL APIs for inventory, orders, and fulfillment
       - Developed CI/CD pipelines and automated deployment infrastructure for reliable releases
@@ -75,54 +91,101 @@ experience:
 skills:
   - category: Languages
     items:
-      - Rust
-      - Python
       - TypeScript
+      - Rust
+      - C++
+      - Python
+      - SQL
       - Java
       - C
       - Haskell
       - OCaml
-      - SQL
       - Bash
+  - category: Frontend
+    items:
+      - React
+      - Next.js
+      - Tailwind CSS
+      - Radix UI
+      - TanStack Query
+      - Zustand
   - category: Backend
     items:
       - Node.js
-      - Tokio
-      - Express
-      - Nest.js
+      - NestJS
+      - gRPC and Protobuf
       - REST APIs
       - GraphQL
+      - BullMQ
+      - Express
+  - category: Distributed Systems
+    items:
+      - Microservices
+      - Event-Driven Architecture
+      - CQRS and Saga Patterns
+      - Transactional Outbox
   - category: Infrastructure
     items:
-      - Docker
-      - Kubernetes
-      - Terraform
+      - Google Cloud (Pub/Sub, GCS, Firestore)
       - AWS (EC2, S3)
+      - Terraform
+      - Kubernetes
+      - Docker
+      - Fly.io
+      - Cloudflare R2
       - GitHub Actions
       - CI/CD
+      - Nix
   - category: Data
     items:
       - PostgreSQL
       - MongoDB
       - Redis
+  - category: Testing and Quality
+    items:
+      - Vitest
+      - Contract Testing
+      - Supertest
+      - OpenAPI and Orval
+      - Biome
   - category: Systems
     items:
       - Linux
       - Unix
-      - Microservices
       - Cloud-Native Development
   - category: Hardware
     items:
+      - Embedded Systems
+      - ESPHome
       - PCB Design
       - CAD
       - 3D Printing
       - Soldering
 
 projects:
+  - name: unilux-uart
+    repo: dangreco/unilux-uart
+    description:
+      - Clean-room reverse-engineered the AUP/WMMM UART protocol used by TA640FC-W-ULX thermostats through black-box observation of the device
+      - Built a hardware-agnostic C++23 library with an incremental byte-at-a-time frame decoder and a matching encoder that is its exact inverse
+      - Packaged as an ESPHome external component, with CMake/Ninja builds, CTest unit suites, and semver releases via CI
+    tags:
+      - C++
+      - Reverse Engineering
+      - Embedded
+
+  - name: threedy
+    repo: dangreco/threedy
+    description:
+      - Home Assistant integration for 3D printer monitoring; 200+ stars, distributed via HACS
+      - Adopted by the community with external contributions and multi-printer support
+    tags:
+      - TypeScript
+      - Open Source
+      - Home Automation
+
   - name: jean
     repo: dangreco/jean
-    stars: 5
-    forks: 0
     description:
       - Computational biology library featuring sequence alignment and genome annotation
       - Implemented Needleman-Wunsch algorithm with configurable scoring matrices and gap penalties
@@ -134,8 +197,6 @@ projects:
 
   - name: hmmmm
     repo: dangreco/hmmmm
-    stars: 4
-    forks: 0
     description:
       - Hidden Markov Model library with Viterbi algorithm for MAP sequence estimation
       - Designed flexible API for defining transition/emission probabilities
@@ -144,15 +205,3 @@ projects:
       - Rust
       - Probabilistic Models
       - Algorithms
-
-  - name: threedy
-    repo: dangreco/threedy
-    stars: 205
-    forks: 60
-    description:
-      - Home Assistant integration for 3D printer monitoring; 200+ stars, distributed via HACS
-      - Adopted by the community with external contributions and multi-printer support
-    tags:
-      - TypeScript
-      - Open Source
-      - Home Automation
