@@ -33,11 +33,13 @@
 
 #let icon(name) = [#fa-icon(name, size: 7pt)]
 
-#let format-date-range(from, to, expected: false) = {
+#let format-date-range(from, to, expected: false, present: false) = {
   let fmt = "[month repr:short] [year]"
   let from_ = datetime(month: from.month, year: from.year, day: 1).display(fmt)
-  let to_ = datetime(month: to.month, year: to.year, day: 1).display(fmt)
-  if expected [Expected #to_] else [#from_ – #to_]
+  if present [#from_ – Present] else {
+    let to_ = datetime(month: to.month, year: to.year, day: 1).display(fmt)
+    if expected [Expected #to_] else [#from_ – #to_]
+  }
 }
 
 // Header
@@ -94,7 +96,10 @@
     columns: (1fr, auto),
     align: (start, end),
     [*#x.title* #sym.dot.c #x.company],
-    text(size: 9pt)[#format-date-range(x.from, x.to)],
+    text(size: 9pt)[#format-date-range(x.from, x.to, present: x.at(
+      "present",
+      default: false,
+    ))],
   )
   text(size: 9pt, fill: rgb("#555"))[#x.location]
   v(0.12cm)
@@ -114,16 +119,8 @@
 }
 
 // Projects
-#section("Projects")
-#for x in cfg.projects {
-  grid(
-    columns: (1fr, auto),
-    align: (start, end),
-    [*#x.name*],
-    text(size: 9pt)[#icon("star") #x.stars #h(0.2cm) #icon(
-        "code-fork",
-      ) #x.forks],
-  )
+#let project(x) = {
+  [*#x.name* \ ]
   text(size: 9pt)[#link("https://github.com/" + x.repo)[github.com/#x.repo] #h(
       0.3cm,
     ) #text(fill: rgb("#555"))[#x.tags.join(" • ")]]
@@ -135,4 +132,13 @@
     )
   }
   v(0.2cm)
+}
+
+// Keep the heading with its first entry so it never orphans at a page break
+#block(breakable: false)[
+  #section("Projects")
+  #project(cfg.projects.first())
+]
+#for x in cfg.projects.slice(1) {
+  project(x)
 }
