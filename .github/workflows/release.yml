@@ -45,11 +45,11 @@ jobs:
           echo "use-agent" >> ~/.gnupg/gpg.conf
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
 
-      - name: Build, sign, and generate checksums
+      - name: Build, sign, and generate release metadata
         env:
           GPG_PRIVATE_KEY_BASE64: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: nix develop .#release --command task sign
+        run: nix develop .#release --command task dist
 
       - name: Upload assets
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
@@ -58,5 +58,6 @@ jobs:
             _build/resume.en.pdf
             _build/resume.en.pdf.asc
             _build/checksums.txt
+            _build/release.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

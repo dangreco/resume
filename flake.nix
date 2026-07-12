@@ -87,6 +87,11 @@
                   go-task
                   typst
                   typstyle
+                  # Release metadata: jq builds release.json, pdfinfo reads the
+                  # page count, sha256sum hashes the artifacts.
+                  jq
+                  poppler-utils
+                  coreutils
                 ]
                 ++ config.pre-commit.settings.enabledPackages;
 
