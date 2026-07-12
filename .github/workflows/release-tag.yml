@@ -3,9 +3,9 @@
 # yamllint disable rule:line-length rule:comments
 name: release-tag
 # Fires when a release PR merges (VERSION changes on dev). Tags the release,
-# fast-forwards main to the release commit, and creates a GitHub Release.
-# The release then triggers Release (sign + attach assets), and the push to main
-# triggers CD (deploy to S3).
+# fast-forwards main to the release commit, and creates a GitHub Release. Creating
+# the release is what triggers Release (build, sign, attach assets, deploy to S3);
+# main is only a pointer to the last released state and drives nothing.
 on:
   push:
     branches: [dev]
