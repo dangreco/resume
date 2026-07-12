@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2026.07.3 - 2026-07-12
+
+### Bug Fixes
+
+- Deploy to S3 from the Release workflow's own build (#28) (#28)
+
 ## 2026.07.2 - 2026-07-12
 
 ### Bug Fixes
