@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2026.07.1 - 2026-07-12
+
+### Features
+
+- Publish release metadata JSON alongside the resume (#24) (#24)
+
 ## 2026.07.0 - 2026-07-12
 
 ### Miscellaneous
