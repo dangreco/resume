@@ -3,12 +3,13 @@
 # yamllint disable rule:line-length
 # yamllint disable rule:comments
 name: CD
+# main only advances when release-tag.yml fast-forwards it to a tagged release,
+# so a push here always means "a release just shipped". Periodic republication is
+# handled by the monthly forced release in release-pr.yml, not by a cron here.
 on:
   push:
     branches:
       - main
-  schedule:
-    - cron: "0 0 * * 0" # weekly
   workflow_dispatch:
 jobs:
   deploy:

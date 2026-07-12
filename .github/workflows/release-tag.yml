@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+# yamllint disable rule:line-length rule:comments
+name: release-tag
+# Fires when a release PR merges (VERSION changes on dev). Tags the release,
+# fast-forwards main to the release commit, and creates a GitHub Release.
+# The release then triggers Release (sign + attach assets), and the push to main
+# triggers CD (deploy to S3).
+on:
+  push:
+    branches: [dev]
+    paths:
+      - VERSION
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # App token so the pushed tag and the created release trigger the downstream
+      # Release and CD workflows (GITHUB_TOKEN would not).
+      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        id: app-token
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+      - id: tag
+        run: |
+          set -euo pipefail
+          VERSION=$(cat VERSION)
+          if git rev-parse -q --verify "refs/tags/${VERSION}" >/dev/null; then
+            echo "Tag ${VERSION} already exists, skipping."
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+      - name: Fast-forward main to the release commit
+        if: steps.tag.outputs.created == 'true'
+        # HEAD is dev's tip (the release commit). This creates main if it is missing
+        # and fast-forwards it otherwise. main is always an ancestor of dev by
+        # construction, so a non-fast-forward here signals real divergence and should fail.
+        run: git push origin "HEAD:refs/heads/main"
+      - name: Generate release notes
+        if: steps.tag.outputs.created == 'true'
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4.8.0
+        with:
+          config: cliff.toml
+          args: --latest --strip header --output notes.md
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Create GitHub Release
+        if: steps.tag.outputs.created == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: gh release create "$VERSION" --title "$VERSION" --notes-file notes.md

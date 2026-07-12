@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+# yamllint disable rule:line-length rule:comments
+name: release-pr
+# Reconciles a single long-lived release PR (branch: release/next) against dev.
+# The version is recomputed from today's UTC date + existing tags on every run,
+# so month-rollover re-targeting and the patch-reset-to-0 happen automatically.
+on:
+  push:
+    branches: [dev]
+    # Ignore the release-merge commit itself (it only touches these files);
+    # release-tag.yml handles that instead. Avoids a race that would re-open a
+    # duplicate ".0" PR before the new tag exists.
+    paths-ignore:
+      - VERSION
+      - CHANGELOG.md
+  schedule:
+    # Daily: flips the open PR to YYYY.MM.0 on the 1st with no commits, and on
+    # that day forces a release so the resume is re-signed and re-published at
+    # least monthly even when its content has not changed.
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+concurrency:
+  group: release-pr
+  cancel-in-progress: false
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # App token is required so the eventual auto-merge can trigger release-tag.yml
+      # (the default GITHUB_TOKEN does not trigger downstream workflows).
+      - uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        id: app-token
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: dev # scheduled/dispatch runs must reconcile against dev explicitly
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+      - id: version
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          YM=$(date -u +%Y.%m)
+          LATEST=$(git tag -l "${YM}.*" | sort -V | tail -n1)
+          if [ -z "$LATEST" ]; then
+            NEXT="${YM}.0"
+          else
+            NEXT="${YM}.$(( ${LATEST##*.} + 1 ))"
+          fi
+          LAST_TAG=$(git tag -l | sort -V | tail -n1)
+          if [ -z "$LAST_TAG" ]; then
+            COUNT=$(git rev-list --count HEAD)
+          else
+            COUNT=$(git rev-list --count "${LAST_TAG}..HEAD")
+          fi
+          # The 1st-of-month scheduled run forces a release with no commits, so the
+          # published PDF is re-signed and re-deployed on a predictable cadence.
+          FORCE=false
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%d)" = "01" ]; then
+            FORCE=true
+          fi
+          if [ "$COUNT" -gt 0 ] || [ "$FORCE" = "true" ]; then SHOULD=true; else SHOULD=false; fi
+          {
+            echo "next=$NEXT"
+            echo "day=$(date -u +%d)"
+            echo "count=$COUNT"
+            echo "force=$FORCE"
+            echo "should_release=$SHOULD"
+          } >> "$GITHUB_OUTPUT"
+          echo "Next version: $NEXT (commits since ${LAST_TAG:-<none>}: $COUNT, force=$FORCE)"
+      - name: Generate CHANGELOG.md
+        if: steps.version.outputs.should_release == 'true'
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4.8.0
+        with:
+          config: cliff.toml
+          args: --tag ${{ steps.version.outputs.next }} --output CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Generate PR/release body
+        if: steps.version.outputs.should_release == 'true'
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4.8.0
+        with:
+          config: cliff.toml
+          args: --unreleased --tag ${{ steps.version.outputs.next }} --strip header --output body.md
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Note re-release for empty releases
+        # A forced monthly release has no commits, so git-cliff produces an empty
+        # body/changelog entry. Add a one-line note so the release isn't blank.
+        if: steps.version.outputs.should_release == 'true' && steps.version.outputs.count == '0'
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+        run: |
+          set -euo pipefail
+          printf -- '- Periodic re-release, no content changes\n' > body.md
+          {
+            printf '## %s - %s\n\n' "$NEXT" "$(date -u +%Y-%m-%d)"
+            printf -- '- Periodic re-release, no content changes\n\n'
+          } > refresh-entry.md
+          # Insert the entry directly under the changelog header (after the intro line).
+          awk 'NR==FNR{e=e $0 ORS; next} {print} /^All notable changes/{print ""; printf "%s", e}' \
+            refresh-entry.md CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
+          rm -f refresh-entry.md
+      - name: Reconcile release PR
+        if: steps.version.outputs.should_release == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          NEXT: ${{ steps.version.outputs.next }}
+          DAY: ${{ steps.version.outputs.day }}
+          FORCE: ${{ steps.version.outputs.force }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "$NEXT" > VERSION
+          # Always rebuild release/next as dev + the version bump, so the PR stays clean.
+          git checkout -B release/next
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(release): $NEXT"
+          git push --force origin release/next
+          PR=$(gh pr list --head release/next --state open --json number --jq '.[0].number // empty')
+          if [ -n "$PR" ]; then
+            gh pr edit "$PR" --title "chore(release): $NEXT" --body-file body.md
+          else
+            gh pr create --base dev --head release/next \
+              --title "chore(release): $NEXT" --body-file body.md
+          fi
+          # Auto-merge the monthly ".0" once required checks pass; it should ship
+          # without manual action. Mid-month releases stay manual.
+          if [ "$DAY" = "01" ]; then
+            gh pr merge release/next --squash --auto
+          fi
