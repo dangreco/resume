@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2026.07.2 - 2026-07-12
+
+### Bug Fixes
+
+- Make release-tag idempotent so a partial release can recover (#26) (#26)
+
 ## 2026.07.1 - 2026-07-12
 
 ### Features
