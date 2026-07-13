@@ -65,7 +65,7 @@ experience:
     present: true
     title: Full Stack Developer
     company: Speer
-    location: Remote
+    location: Toronto, ON
     description:
       - Architected the event-driven backend for a healthcare telemedicine platform, publishing a shared Google Cloud Pub/Sub event-bus library (transactional outbox, idempotency stores, dead-letter queues, runtime contract tests) adopted across a dozen NestJS services
       - Built a distributed saga and CQRS orchestration engine with durable compensation, driving booking, checkout, signup, and rescheduling across services with automatic refunds on failure and at-source PHI redaction
@@ -80,7 +80,7 @@ experience:
       year: 2022
     title: Full Stack Developer
     company: Speer
-    location: Toronto, ON
+    location: Toronto, ON (Remote)
     description:
       - Built backend services for a regulated ecommerce platform using Node.js, MongoDB, and Redis
       - Designed and implemented a custom payment gateway to meet legal constraints for nicotine product sales
