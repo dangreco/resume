@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2026.07.5 - 2026-07-13
+
+### Miscellaneous
+
+- Update location (#32) (#32)
+
 ## 2026.07.4 - 2026-07-12
 
 ### Features
