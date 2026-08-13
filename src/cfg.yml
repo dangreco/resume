@@ -67,11 +67,13 @@ experience:
     company: Speer
     location: Toronto, ON
     description:
-      - Architected the event-driven backend for a healthcare telemedicine platform, publishing a shared Google Cloud Pub/Sub event-bus library (transactional outbox, idempotency stores, dead-letter queues, runtime contract tests) adopted across a dozen NestJS services
-      - Built a distributed saga and CQRS orchestration engine with durable compensation, driving booking, checkout, signup, and rescheduling across services with automatic refunds on failure and at-source PHI redaction
+      - Built a cross-platform Rust SDK that decodes Bluetooth Low Energy advertisements into identified devices and generates its iOS (Swift) and Android (Kotlin) bindings from one core with UniFFI; median-filtered RSSI windows and a least-squares-calibrated path-loss model drive distance estimation
+      - Built the Rust ingest and query API behind it over a replicated ClickHouse cluster, encrypting request bodies with JWE, publishing P-256 keys as a rotatable JWKS, and binding every write to a verified token so tenant isolation holds end to end
+      - Architected an event-driven backend on Google Cloud Pub/Sub, publishing a shared event-bus library (transactional outbox, idempotency stores, dead-letter queues, runtime contract tests) adopted across a dozen NestJS services
+      - Built a distributed saga and CQRS orchestration engine with durable compensation, driving multi-service booking, checkout, signup, and rescheduling flows with automatic refunds on failure and at-source redaction of sensitive fields
       - Defined gRPC service contracts with Buf and provisioned the full GCP topology in Terraform across staging and production, including per-service subscriptions, dead-letter retention, and remote-state backends
-      - Created a company-wide CI/CD platform of reusable, versioned GitHub Actions workflows with automated release versioning and package publishing, consumed by every service
-      - Shipped full-stack features across two client products on Next.js and NestJS, holding backend coverage above 95% with Vitest unit and contract suites
+      - "Standardized release engineering across every repository: reusable versioned GitHub Actions workflows, release-please versioning, tag-triggered cross-compilation publishing an Android AAR and iOS XCFramework, cargo-deny supply-chain policy, and Nix flakes pinning toolchains so local and CI match"
+      - Shipped full-stack TypeScript monorepos on NestJS and Next.js with oRPC contracts as the single source of truth for every endpoint, AES-256-GCM at-rest encryption behind a rotating keyring with blind-index lookups, and DPoP proof-of-possession with a shared replay store
   - from:
       month: 6
       year: 2021
@@ -95,6 +97,8 @@ skills:
       - Rust
       - C++
       - Python
+      - Swift
+      - Kotlin
       - SQL
       - Java
       - C
@@ -139,6 +143,7 @@ skills:
   - category: Data
     items:
       - PostgreSQL
+      - ClickHouse
       - MongoDB
       - Redis
   - category: Testing and Quality
