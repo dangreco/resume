@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## 2026.08.0 - 2026-08-13
+
+### Content
+
+- Content/speer-latest-experience (#42) (#42)
+
+### Miscellaneous
+
+- Bump chrnorm/deployment-status from 2.0.3 to 2.0.4 (#36) (#36)
+- Bump aws-actions/configure-aws-credentials (#37) (#37)
+- Bump actions/upload-artifact from 7.0.0 to 7.0.1 (#38) (#38)
+- Bump actions/create-github-app-token from 2.2.2 to 3.2.0 (#39) (#39)
+- Bump chrnorm/deployment-action from 2.0.7 to 2.0.8 (#40) (#40)
+
 ## 2026.07.6 - 2026-07-13
 
 ### Bug Fixes
