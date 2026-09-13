@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## 2026.09.0 - 2026-09-13
+
+### Miscellaneous
+
+- Bump marocchino/sticky-pull-request-comment (#43) (#43)
+- Bump actions/checkout from 7.0.0 to 7.0.1 (#46) (#46)
+- Bump orhun/git-cliff-action from 4.8.0 to 4.9.0 (#48) (#48)
+- Bump softprops/action-gh-release from 2.6.1 to 3.0.3 (#49) (#49)
+- Bump aws-actions/configure-aws-credentials (#50) (#50)
+
 ## 2026.08.0 - 2026-08-13
 
 ### Content
